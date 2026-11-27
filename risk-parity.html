@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Risk parity portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect x=%279%27 y=%273%27 width=%2714%27 height=%2726%27 fill=%27%23e3120b%27/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html">Yuchen Kuang</a>
+    <nav aria-label="Main">
+      <a href="index.html#projects">Projects</a>
+      <a href="rsrs.html">RSRS rotation</a>
+      <a href="risk-parity.html" aria-current="page">Risk parity</a>
+      <a href="https://github.com/GITHUB_USERNAME/quant-research/tree/main/risk_parity">Code</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <h1>Risk parity: under a third of the drawdown of equal weight, with a higher Sharpe ratio</h1>
+    <p class="lede">Six ETFs covering Chinese stocks, treasury bonds, gold and three commodity futures funds, weighted so each one contributes the same share of portfolio risk. Rebalanced every 30 trading days, after trading costs, from Oct 2013 to Feb 2026.</p>
+    <div class="summary">
+      <p><strong>What I did:</strong> built a risk parity portfolio across six asset classes, compared it with equal weight, 60/40 and mean-variance optimization, all after trading costs.</p>
+      <p><strong>Result:</strong> Sharpe ratio of 1.00 and a 4.8% max drawdown, against 0.78 and 16.1% for equal weight. Mean-variance looked best in hindsight but reached only 0.46 when run live.</p>
+      <ul class="tags"><li>Python</li><li>SciPy optimization</li><li>Portfolio construction</li><li>Risk modeling</li><li>Efficient frontier</li></ul>
+    </div>
+    <div class="kpis" id="kpis"></div>
+  </div>
+</section>
+
+<section class="band panel" aria-labelledby="calc-title">
+  <div class="wrap">
+    <h2 id="calc-title">Try it: how volatility sets the weights</h2>
+    <p>The starting values are each ETF's volatility over the last year of data, with the correlations measured over the same year. Move a slider and the risk parity weights are solved again in your browser.</p>
+    <div class="calc">
+      <div>
+        <div id="sliders"></div>
+        <button type="button" class="reset" id="reset">Reset to last year's data</button>
+      </div>
+      <div>
+        <ul class="legend">
+          <li><i style="background:var(--s1)"></i>Risk parity weight</li>
+          <li><i style="background:var(--bench)"></i>Equal weight</li>
+        </ul>
+        <ul class="bars wbars" id="wbars"></ul>
+        <p class="note" id="calc-note"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" aria-labelledby="nav-title">
+  <div class="wrap">
+    <h2 id="nav-title">Steady, but slow</h2>
+    <p>Risk parity grew more slowly than equal weight but with far smaller drops. The CSI 300 carried the most risk and still earned less than equal weight over this period.</p>
+    <ul class="legend">
+      <li><i style="background:var(--s1)"></i>Risk parity, 6 assets</li>
+      <li><i style="background:var(--s4)"></i>Risk parity, 3 core assets</li>
+      <li><i style="background:var(--s2)"></i>Equal weight</li>
+      <li><i style="background:var(--s3)"></i>60/40 stocks and bonds</li>
+      <li><i style="background:var(--bench)"></i>CSI 300</li>
+    </ul>
+    <div class="fig" id="nav-fig" role="img" aria-label="Growth of 1 yuan for five portfolios"></div>
+    <div class="fig short" id="dd-fig" role="img" aria-label="Drawdowns of risk parity, equal weight and CSI 300"></div>
+    <p class="caption">Top: growth of 1 yuan, after costs. Bottom: drawdown from the previous peak for risk parity, equal weight and the CSI 300.</p>
+    <div class="scroll"><table id="stats-table"></table></div>
+    <p class="caption" id="since-note"></p>
+  </div>
+</section>
+
+<section class="band panel" aria-labelledby="w-title">
+  <div class="wrap">
+    <h2 id="w-title">Weights at each rebalance</h2>
+    <p>Commodity ETFs join once they have 60 days of history, from early 2020. Bonds carry most of the weight because they are by far the least volatile asset.</p>
+    <ul class="legend" id="w-legend"></ul>
+    <div class="fig" id="w-fig" role="img" aria-label="Portfolio weights over time"></div>
+  </div>
+</section>
+
+
+<section class="band" aria-labelledby="mv-title">
+  <div class="wrap">
+    <h2 id="mv-title">Compared with mean-variance optimization</h2>
+    <p>Mean-variance optimization picks the weights with the highest expected return for each level of risk, which traces out the efficient frontier. Using Feb 2020 to Feb 2026 data for all six ETFs, risk parity sits just under the frontier, close to the long-only maximum Sharpe portfolio.</p>
+    <div class="steps" id="mv-view" role="group" aria-label="Chart view">
+      <button type="button" data-v="0" aria-pressed="true">Zoom in</button>
+      <button type="button" data-v="1" aria-pressed="false">Show all</button>
+    </div>
+    <ul class="legend">
+      <li><i style="background:var(--s2)"></i>Efficient frontier, long only</li>
+      <li><i style="background:var(--s4)"></i>Efficient frontier, short sales allowed</li>
+      <li><i style="background:var(--s1);height:10px;width:10px;border-radius:50%"></i>Risk parity</li>
+      <li><i style="background:var(--bench);height:10px;width:10px;border-radius:50%"></i>Single ETFs</li>
+    </ul>
+    <div class="fig tall" id="mv-fig" role="img" aria-label="Efficient frontier with risk parity, equal weight and each ETF"></div>
+    <p class="caption">Annual return against annual volatility from daily log returns. Hover a point to see its weights. The frontier with short sales comes from the closed-form KKT solution; the long-only one from a quadratic program.</p>
+
+    <h3 style="margin-top:28px">The catch: the frontier needs returns you only know afterwards</h3>
+    <p>In a live portfolio the optimizer has to estimate expected returns from the past. I ran both optimizers on the same schedule as risk parity, every 30 trading days with 0.08% costs per side, estimating returns from the past year and covariance from the past 60 days.</p>
+    <div class="scroll"><table id="mv-table"></table></div>
+    <div class="note"><p id="mv-note"></p></div>
+  </div>
+</section>
+
+<section class="band panel" aria-labelledby="m-title">
+  <div class="wrap split">
+    <div>
+      <h2 id="m-title">Method</h2>
+      <p>At each rebalance I estimate the covariance matrix from the past 60 days of log returns. Asset i's risk contribution is its weight times its marginal risk, w<sub>i</sub>(Σw)<sub>i</sub>/σ. SciPy's SLSQP solver finds long-only weights that sum to one and make all contributions equal, and the script checks that they come out equal.</p>
+      <p>Between rebalances the weights drift with prices. Costs of 0.08% per side are charged on turnover, the sum of the weight changes, so all four portfolios pay for what they trade.</p>
+    </div>
+    <div>
+      <h2>Limitations</h2>
+      <ul class="caveats">
+        <li>Bonds averaged about three quarters of the portfolio, so the result leans on a long bull market in Chinese government bonds. Rising rates would hurt it.</li>
+        <li>A 5.5% return at 3.6% volatility is low in absolute terms. Funds that run risk parity use leverage to reach a target return, and this test leaves out leverage and its financing cost.</li>
+        <li>A 60-day window reacts quickly but makes the weights noisy. Longer windows or shrinkage of the covariance matrix are worth testing.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a href="index.html">Back to all projects</a>
+    <a href="https://github.com/GITHUB_USERNAME/quant-research/tree/main/risk_parity">Code for this project</a>
+  </div>
+</footer>
+
+<script src="js/charts.js"></script>
+<script>
+{
+  const { pct, num, esc } = Charts;
+  const ASSET_COLORS = ["--s1", "--s5", "--s2", "--s3", "--s4", "--bench"];
+
+  /* Equal risk contribution by cyclical coordinate descent, then normalized to sum to 1 */
+  function riskParity(cov) {
+    const n = cov.length, b = 1 / n;
+    const y = cov.map((r, i) => 1 / Math.sqrt(cov[i][i]));
+    for (let it = 0; it < 500; it++) {
+      for (let i = 0; i < n; i++) {
+        let a = 0;
+        for (let j = 0; j < n; j++) if (j !== i) a += cov[i][j] * y[j];
+        y[i] = (-a + Math.sqrt(a * a + 4 * cov[i][i] * b)) / (2 * cov[i][i]);
+      }
+    }
+    const s = y.reduce((p, q) => p + q, 0);
+    return y.map(v => v / s);
+  }
+  function contributions(w, cov) {
+    const m = cov.map(r => r.reduce((p, c, j) => p + c * w[j], 0));
+    const rc = w.map((x, i) => x * m[i]), t = rc.reduce((p, q) => p + q, 0);
+    return rc.map(v => v / t);
+  }
+
+  fetch("data/risk_parity.json").then(r => r.json()).then(d => {
+    const f = d.stats_full;
+    document.getElementById("kpis").innerHTML = [
+      [num(f.risk_parity.sharpe), "Sharpe ratio, vs " + num(f.equal_weight.sharpe) + " equal weight"],
+      [pct(f.risk_parity.max_dd), "max drawdown, vs " + pct(f.equal_weight.max_dd)],
+      [pct(f.risk_parity.ann_return), "annual return"],
+      [pct(f.risk_parity.ann_vol), "annual volatility"],
+    ].map(([v, l]) => `<div class="kpi"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
+
+    /* calculator */
+    const c = d.calculator, n = c.assets.length;
+    let vols = c.ann_vol.slice();
+    const sl = document.getElementById("sliders");
+    sl.innerHTML = c.assets.map((a, i) => `<label class="slider"><span>${esc(a)}</span>
+      <input type="range" id="vol-${i}" min="0.5" max="40" step="0.5" value="${(vols[i] * 100).toFixed(1)}" aria-label="${esc(a)} volatility">
+      <output id="vol-${i}-out">${pct(vols[i])}</output></label>`).join("");
+    const calc = () => {
+      const cov = c.corr.map((r, i) => r.map((p, j) => p * vols[i] * vols[j]));
+      const w = riskParity(cov), ew = new Array(n).fill(1 / n), rcEw = contributions(ew, cov);
+      document.getElementById("wbars").innerHTML = c.assets.map((a, i) => `<li><span>${esc(a)}</span>
+        <span class="track"><span class="fill rp" style="width:${w[i] * 100}%"></span><span class="fill ew" style="width:${100 / n}%"></span></span>
+        <span class="val">${pct(w[i])} <span class="muted">vs ${pct(1 / n, 0)}</span></span></li>`).join("");
+      const big = rcEw.indexOf(Math.max(...rcEw));
+      document.getElementById("calc-note").textContent =
+        `With equal weights, ${c.assets[big]} alone would supply ${pct(rcEw[big], 0)} of the portfolio's risk. Risk parity gives each asset ${pct(1 / n, 0)}.`;
+    };
+    sl.addEventListener("input", e => {
+      const i = +e.target.id.split("-")[1];
+      vols[i] = +e.target.value / 100;
+      document.getElementById(`vol-${i}-out`).textContent = pct(vols[i]);
+      calc();
+    });
+    document.getElementById("reset").onclick = () => {
+      vols = c.ann_vol.slice();
+      vols.forEach((v, i) => { document.getElementById(`vol-${i}`).value = (v * 100).toFixed(1); document.getElementById(`vol-${i}-out`).textContent = pct(v); });
+      calc();
+    };
+    calc();
+
+    /* performance */
+    const nv = d.nav;
+    Charts.line(document.getElementById("nav-fig"), {
+      dates: d.dates, yFmt: v => v.toFixed(1) + "x", tipFmt: v => v.toFixed(2) + "x",
+      series: [{ name: "CSI 300", values: nv.csi300, color: "--bench" },
+               { name: "60/40", values: nv.sixty_forty, color: "--s3" },
+               { name: "Equal weight", values: nv.equal_weight, color: "--s2" },
+               { name: "Risk parity, 3 assets", values: nv.risk_parity_3, color: "--s4" },
+               { name: "Risk parity, 6 assets", values: nv.risk_parity, color: "--s1", width: 2.5 }],
+    });
+    Charts.line(document.getElementById("dd-fig"), {
+      dates: d.dates, area: true, yFmt: v => Math.round(v * 100) + "%", tipFmt: v => pct(v),
+      series: [{ name: "CSI 300", values: d.drawdown.csi300, color: "--bench", width: 1.5 },
+               { name: "Equal weight", values: d.drawdown.equal_weight, color: "--s2", width: 1.5 },
+               { name: "Risk parity", values: d.drawdown.risk_parity, color: "--s1", width: 1.5 }],
+    });
+    const rows = [["risk_parity", "Risk parity, 6 assets"], ["risk_parity_gross", "Risk parity, before costs"],
+      ["risk_parity_3", "Risk parity, 3 core assets"], ["equal_weight", "Equal weight"],
+      ["sixty_forty", "60/40 stocks and bonds"], ["csi300", "CSI 300 buy and hold"]];
+    document.getElementById("stats-table").innerHTML =
+      `<thead><tr><th>Portfolio</th><th>Annual return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Calmar</th><th>Sharpe since 2020</th></tr></thead><tbody>` +
+      rows.map(([k, name]) => { const s = f[k], t = d.stats_since_commodities[k];
+        return `<tr class="${k === "risk_parity" ? "hl" : ""}"><td>${name}</td><td>${pct(s.ann_return)}</td><td>${pct(s.ann_vol)}</td><td>${num(s.sharpe)}</td><td>${pct(s.max_dd)}</td><td>${num(s.calmar)}</td><td>${num(t.sharpe)}</td></tr>`; }).join("") + "</tbody>";
+    document.getElementById("since-note").textContent =
+      `${d.period[0]} to ${d.period[1]}. Sharpe uses a 2% risk-free rate. The last column starts on ${d.commodities_from}, when all six assets are in the portfolio.`;
+
+    /* weights */
+    const W = d.weights;
+    document.getElementById("w-legend").innerHTML = W.assets.map((a, j) => `<li><i style="background:var(${ASSET_COLORS[j]})"></i>${esc(a)}</li>`).join("");
+    Charts.stack(document.getElementById("w-fig"), { dates: W.dates, end: d.period[1], keys: W.assets, values: W.values, colors: ASSET_COLORS });
+
+    /* mean-variance comparison */
+    fetch("data/frontier.json").then(r => r.json()).then(fd => {
+      const P = fd.points, short = { "Global minimum variance": "Minimum variance", "Maximum Sharpe, long only": "Maximum Sharpe" };
+      const pts = [
+        ...fd.asset_points.map(a => ({ name: a.name, vol: a.vol, ret: a.ret, color: "--bench", r: 4, side: a.name === "Energy & chemicals" ? "l" : "r",
+          dy: a.name === "Treasury bonds" || a.name === "Soybean meal" ? 16 : a.name === "Non-ferrous metals" ? -6 : 4 })),
+        { name: "Equal weight", ...P["Equal weight"], color: "--bench", r: 6, side: "r", major: true },
+        { name: short["Global minimum variance"], ...P["Global minimum variance"], color: "--s3", r: 6, side: "r", dy: -8, major: true },
+        { name: short["Maximum Sharpe, long only"], ...P["Maximum Sharpe, long only"], color: "--s2", r: 6, side: "l", major: true },
+        { name: "Risk parity", ...P["Risk parity"], color: "--s1", r: 7, side: "r", major: true },
+      ];
+      const views = [{ x: [0, 0.12], y: [0.02, 0.11] }, { x: [0, 0.26], y: [0, 0.24] }];
+      const ch = Charts.xy(document.getElementById("mv-fig"), {
+        assets: fd.assets, view: views[0], points: pts,
+        lines: [{ name: "short", pts: fd.unconstrained, color: "--s4", width: 1.5 }, { name: "long", pts: fd.long_only, color: "--s2", width: 2.5 }],
+      });
+      const vb = document.getElementById("mv-view");
+      vb.addEventListener("click", e => {
+        const b = e.target.closest("button"); if (!b) return;
+        vb.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+        ch.update({ view: views[+b.dataset.v] });
+      });
+      const B = fd.backtest, order = [["Max Sharpe", "Maximum Sharpe, long only"], ["Min variance", "Minimum variance, long only"], ["Risk parity", "Risk parity"], ["Equal weight", "Equal weight"]];
+      document.getElementById("mv-table").innerHTML =
+        `<thead><tr><th>Rolling portfolio, after costs</th><th>Annual return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Weight change per rebalance</th></tr></thead><tbody>` +
+        order.map(([k, name]) => { const s = B[k];
+          return `<tr class="${k === "Risk parity" ? "hl" : ""}"><td>${name}</td><td>${pct(s.ann_return)}</td><td>${pct(s.ann_vol)}</td><td>${num(s.sharpe)}</td><td>${pct(s.max_dd)}</td><td>${k === "Equal weight" ? "" : pct(s.turnover, 0)}</td></tr>`; }).join("") + "</tbody>";
+      const ms = B["Max Sharpe"], rpb = B["Risk parity"];
+      document.getElementById("mv-note").textContent =
+        `In hindsight the maximum Sharpe portfolio looked best. Run live, it reached a Sharpe ratio of ${num(ms.sharpe)} against ${num(rpb.sharpe)} for risk parity, and its target weights moved by ${pct(ms.turnover, 0)} at each rebalance. One year of returns says little about the next year, so the optimizer chases whatever did well recently. Risk parity only needs volatility and correlation, which are far more stable, and that is the main reason to prefer it here.`;
+    });
+
+  });
+}
+</script>
+</body>
+</html>

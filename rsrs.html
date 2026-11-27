@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RSRS ETF rotation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect x=%279%27 y=%273%27 width=%2714%27 height=%2726%27 fill=%27%23e3120b%27/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html">Yuchen Kuang</a>
+    <nav aria-label="Main">
+      <a href="index.html#projects">Projects</a>
+      <a href="rsrs.html" aria-current="page">RSRS rotation</a>
+      <a href="risk-parity.html">Risk parity</a>
+      <a href="https://github.com/GITHUB_USERNAME/quant-research/tree/main/rsrs_rotation">Code</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <h1>An ETF rotation strategy that survived an honest re-test</h1>
+    <p class="lede">The original backtest earned 27% a year. Once trading costs were charged, that edge was gone. A longer signal window, chosen only on 2014 to 2021 data, brought it back and kept working from 2022 to 2026.</p>
+    <div class="kpis" id="kpis"></div>
+    <p class="small muted">After costs and next-day execution, Jan 2022 to Feb 2026. Built during my internship at Jianghai Securities and rebuilt here on public Yahoo Finance data.</p>
+    <div class="summary">
+      <p><strong>What I did:</strong> rebuilt a trend-following ETF rotation strategy on public data, added trading costs, and chose its one parameter on 2014 to 2021 data only.</p>
+      <p><strong>Result:</strong> 27.3% a year and a 1.02 Sharpe ratio on 2022 to 2026 test data, against 1.1% for the CSI 300.</p>
+      <ul class="tags"><li>Python</li><li>pandas</li><li>NumPy</li><li>Backtesting</li><li>Out-of-sample testing</li><li>Data cleaning</li></ul>
+    </div>
+
+  </div>
+</section>
+
+<section class="band panel" aria-labelledby="story-title">
+  <div class="wrap">
+    <h2 id="story-title">Three steps from paper result to realistic result</h2>
+    <div class="steps" id="story-steps" role="group" aria-label="Backtest steps"></div>
+    <div class="story">
+      <div>
+        <ul class="legend" id="story-legend"></ul>
+        <div class="fig" id="story-fig" role="img" aria-label="Growth of 1 yuan, log scale"></div>
+        <p class="caption">Growth of 1 yuan, log scale, weekly points from daily returns.</p>
+      </div>
+      <aside class="readout" id="story-readout" aria-live="polite"></aside>
+    </div>
+  </div>
+</section>
+
+<section class="band" aria-labelledby="idea-title">
+  <div class="wrap split">
+    <div>
+      <h2 id="idea-title">How the signal works</h2>
+      <p>RSRS stands for resistance support relative strength. For each ETF, take the last N days and regress the daily high on the daily low. A steep slope means highs are rising faster than lows, which reads as an uptrend. The score is that slope multiplied by the regression's R squared, so a trend only counts when the fit is clean.</p>
+      <p>Every evening the strategy ranks six ETFs by score and holds only the top one the next day. The six cover large caps, mid caps, dividend stocks, ChiNext growth stocks, the Nasdaq 100 and gold.</p>
+      <p>The slope equals cov(high, low) divided by var(low), and R squared equals the squared correlation, so the whole score is computed with rolling pandas operations instead of fitting thousands of regressions.</p>
+    </div>
+    <div>
+      <h3>What made the backtest more honest</h3>
+      <ul class="caveats">
+        <li><strong>Bad prices removed.</strong> Yahoo data had moves larger than the exchange's daily price limit. Short spikes that reversed within days were dropped, and unadjusted early history was cut off. Four fixes in total.</li>
+        <li><strong>Only shared trading days.</strong> If one ETF misses a day, shifting the signal by one row would put it on the wrong date, so only days when all six traded are kept.</li>
+        <li><strong>Costs on every switch.</strong> 0.03% commission plus 0.05% slippage per side, charged twice on a switch since one ETF is sold and another bought. Trades happen at the open after each signal.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="band panel" aria-labelledby="grid-title">
+  <div class="wrap">
+    <h2 id="grid-title">Choosing the window without looking at the test period</h2>
+    <p>I ran the strategy for 13 window lengths and picked the one with the best Sharpe ratio from 2014 to 2021. That was N = 30. Only after the choice did I look at 2022 to 2026.</p>
+    <ul class="legend">
+      <li><i style="background:var(--s2)"></i>Sharpe 2014 to 2021, used to choose</li>
+      <li><i style="background:var(--s1)"></i>Sharpe 2022 to 2026, the test</li>
+    </ul>
+    <div class="fig" id="grid-fig" role="img" aria-label="Sharpe ratio by window length, in-sample and out-of-sample"></div>
+    <p class="caption">Sharpe ratio after costs by window length N, in trading days. The shaded column is the chosen window. Hover for turnover.</p>
+    <div class="note"><p>The result is sensitive to N. Windows of 25 to 40 days all did well out of sample, but N = 18 looked solid in sample at 0.75 and fell to 0.25 afterwards. One good test period is evidence, not proof.</p></div>
+  </div>
+</section>
+
+<section class="band" aria-labelledby="cmp-title">
+  <div class="wrap">
+    <h2 id="cmp-title">Compared with simple alternatives</h2>
+    <p>A rotation strategy should beat just holding all six ETFs. The fair comparison is an equal-weight portfolio of the same ETFs, rebalanced monthly with the same costs.</p>
+    <ul class="legend">
+      <li><i style="background:var(--s1)"></i>Strategy, N = 30</li>
+      <li><i style="background:var(--s2)"></i>Equal weight, same 6 ETFs</li>
+      <li><i style="background:var(--bench)"></i>CSI 300 buy and hold</li>
+    </ul>
+    <div class="fig" id="cmp-fig" role="img" aria-label="Growth of 1 yuan for strategy, equal weight and CSI 300"></div>
+    <div class="fig short" id="dd-fig" role="img" aria-label="Drawdown of the strategy"></div>
+    <p class="caption">Top: growth of 1 yuan, log scale. Bottom: the strategy's drawdown from its previous peak.</p>
+    <div class="scroll"><table id="cmp-table"></table></div>
+  </div>
+</section>
+
+<section class="band panel" aria-labelledby="lim-title">
+  <div class="wrap split">
+    <div>
+      <h2 id="lim-title">What it actually holds</h2>
+      <p>Share of trading days each ETF was the one held, N = 30.</p>
+      <ul class="bars" id="hold-bars"></ul>
+    </div>
+    <div>
+      <h2>Limitations</h2>
+      <ul class="caveats">
+        <li>Gold and the Nasdaq 100 were held most of the time, and both had strong runs in this period. Part of the return is exposure to those two assets, not the signal alone.</li>
+        <li>The six ETFs were picked with hindsight. A fairer test would pick the universe by a rule fixed in advance.</li>
+        <li>There is one train and test split. Walk-forward testing, re-choosing N every year, would be a stronger check.</li>
+        <li>Holding one ETF at a time gives drawdowns above 20%. Blending the top two or three would likely be smoother.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a href="index.html">Back to all projects</a>
+    <a href="https://github.com/GITHUB_USERNAME/quant-research/tree/main/rsrs_rotation">Code for this project</a>
+  </div>
+</footer>
+
+<script src="js/charts.js"></script>
+<script src="js/story.js"></script>
+<script>
+{
+  const { pct, num, esc } = Charts;
+  window.addEventListener("rsrs-data", e => {
+    const d = e.detail, oos = d.compare.strategy.out_of_sample;
+    document.getElementById("kpis").innerHTML = [
+      [pct(oos.ann_return), "annual return"], [num(oos.sharpe), "Sharpe ratio"],
+      [pct(oos.max_dd), "max drawdown"], [pct(d.compare.csi300.out_of_sample.ann_return), "CSI 300 annual return"],
+    ].map(([v, l]) => `<div class="kpi"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
+
+    const g = d.grid;
+    Charts.columns(document.getElementById("grid-fig"), {
+      cats: g.map(r => r.N), mark: d.best_n, fmt: v => v.toFixed(1), label: n => `N = ${n}`,
+      series: [{ name: "2014 to 2021", values: g.map(r => r.is_sharpe), color: "--s2" },
+               { name: "2022 to 2026", values: g.map(r => r.oos_sharpe), color: "--s1" }],
+      extra: i => `<div class="row"><span>Switches a year</span><strong>${Math.round(g[i].switches_per_year)}</strong></div>`,
+    });
+
+    const rebase = v => v.map(x => x / v[0]);
+    Charts.line(document.getElementById("cmp-fig"), {
+      dates: d.dates, log: true, yFmt: v => v + "x", tipFmt: v => v.toFixed(2) + "x",
+      markers: [{ date: d.split, label: "Test period" }],
+      series: [{ name: "CSI 300", values: rebase(d.nav.csi300), color: "--bench" },
+               { name: "Equal weight", values: rebase(d.nav.equal_weight), color: "--s2" },
+               { name: "Strategy", values: rebase(d.nav.strategy), color: "--s1", width: 2.5 }],
+    });
+    Charts.line(document.getElementById("dd-fig"), {
+      dates: d.dates, area: true, yFmt: v => Math.round(v * 100) + "%", tipFmt: v => pct(v),
+      series: [{ name: "Strategy drawdown", values: d.drawdown, color: "--s1", width: 1.5 }],
+    });
+
+    const rows = [["strategy", "Strategy, N = 30"], ["equal_weight", "Equal weight, 6 ETFs"], ["csi300", "CSI 300"]];
+    const per = [["full", "2014 to 2026"], ["in_sample", "2014 to 2021"], ["out_of_sample", "2022 to 2026"]];
+    document.getElementById("cmp-table").innerHTML =
+      `<thead><tr><th>Portfolio</th><th>Period</th><th>Annual return</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th></tr></thead><tbody>` +
+      rows.flatMap(([k, name]) => per.map(([p, pl], j) => {
+        const s = d.compare[k][p];
+        return `<tr class="${k === "strategy" && p === "out_of_sample" ? "hl" : ""}"><td>${j ? "" : esc(name)}</td><td>${pl}</td><td>${pct(s.ann_return)}</td><td>${pct(s.ann_vol)}</td><td>${num(s.sharpe)}</td><td>${pct(s.max_dd)}</td></tr>`;
+      })).join("") + "</tbody>";
+
+    const share = Object.entries(d.holding_share), max = share[0][1];
+    document.getElementById("hold-bars").innerHTML = share.map(([k, v]) =>
+      `<li><span>${esc(k)}</span><span class="track"><span class="fill" style="display:block;width:${v / max * 100}%"></span></span><span class="val">${Math.round(v * 100)}%</span></li>`).join("");
+  });
+}
+</script>
+</body>
+</html>

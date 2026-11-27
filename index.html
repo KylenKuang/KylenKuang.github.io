@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yuchen Kuang</title>
+<meta name="description" content="Yuchen Kuang, M.Eng. in Financial Technology at Duke. Quantitative research projects with honest backtests.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect x=%279%27 y=%273%27 width=%2714%27 height=%2726%27 fill=%27%23e3120b%27/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html">Yuchen Kuang</a>
+    <nav aria-label="Main">
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="Yuchen_Kuang_Resume.pdf">Resume</a>
+      <a href="https://github.com/GITHUB_USERNAME">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <h1>I test investment ideas with data until I can trust the answer.</h1>
+    <p class="lede">I'm a Master of Engineering student in Financial Technology at Duke. I work in Python on market data, backtests and portfolio construction, and I care most about one question: does the result still hold after trading costs, realistic execution and data the model has never seen?</p>
+    <p class="seeking">Looking for Summer 2027 internships in quantitative research, data science and analytics.</p>
+    <ul class="facts">
+      <li>Duke University, M.Eng. FinTech, 2026 to 2028</li>
+      <li>Quant research intern, Jianghai Securities</li>
+      <li>Data product intern, Bairong</li>
+      <li>Durham, NC</li>
+    </ul>
+    <div class="links">
+      <a class="btn primary" href="Yuchen_Kuang_Resume.pdf">Download resume</a>
+      <a class="btn" href="mailto:yuchen.kuang@duke.edu">yuchen.kuang@duke.edu</a>
+      <a class="btn" href="https://www.linkedin.com/in/LINKEDIN_ID">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<section class="band panel" aria-labelledby="story-title">
+  <div class="wrap">
+    <h2 id="story-title">One strategy, three levels of realism</h2>
+    <p>An ETF rotation strategy from my internship, re-tested step by step. The final version earned 27.3% a year with a 1.02 Sharpe ratio from 2022 to 2026, on data it never saw while being tuned. Click through the steps to see how it got there.</p>
+    <div class="steps" id="story-steps" role="group" aria-label="Backtest steps"></div>
+    <div class="story">
+      <div>
+        <ul class="legend" id="story-legend"></ul>
+        <div class="fig" id="story-fig" role="img" aria-label="Growth of 1 yuan, log scale, strategy against the CSI 300"></div>
+        <p class="caption">Growth of 1 yuan, log scale. Daily data from Jan 2014 to Feb 2026. <a href="rsrs.html">Read the full project</a></p>
+      </div>
+      <aside class="readout" id="story-readout" aria-live="polite"></aside>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="projects" aria-labelledby="projects-title">
+  <div class="wrap">
+    <h2 id="projects-title">Projects</h2>
+    <ul class="projects">
+      <li class="project">
+        <div>
+          <h3><a href="rsrs.html">RSRS ETF rotation</a></h3>
+          <p>Holds whichever of six ETFs has the strongest RSRS trend signal. Re-tested with costs, next-day execution and a window chosen without looking at the test period.</p>
+        </div>
+        <div class="nums" id="rsrs-nums"></div>
+        <div class="spark" id="rsrs-spark" aria-hidden="true"></div>
+      </li>
+      <li class="project">
+        <div>
+          <h3><a href="risk-parity.html">Risk parity across asset classes</a></h3>
+          <p>Stocks, treasury bonds, gold and commodity futures ETFs, weighted so each one adds the same amount of risk. Compared with equal weight and 60/40.</p>
+        </div>
+        <div class="nums" id="rp-nums"></div>
+        <div class="spark" id="rp-spark" aria-hidden="true"></div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="band panel" id="experience" aria-labelledby="exp-title">
+  <div class="wrap">
+    <h2 id="exp-title">Experience</h2>
+    <div class="cv">
+      <div class="when">Dec 2025 to Feb 2026</div>
+      <div class="what">
+        <h3>Jianghai Securities, Strategic Investment Department</h3>
+        <div class="muted">Quantitative Research Intern</div>
+        <ul>
+          <li>Built and re-tested an RSRS rotation strategy across six ETFs and a risk parity portfolio across four asset classes.</li>
+          <li>Reproduced six strategies from internal research reports, including a PCA-based concentration indicator for momentum-crash risk.</li>
+          <li>Built a continuous IC futures series and fixed an annualization error in the basis near contract expiry.</li>
+          <li>Wrote data checks based on exchange price limits to catch bad prices before backtesting.</li>
+        </ul>
+      </div>
+      <div class="when">Sep 2025 to Dec 2025</div>
+      <div class="what">
+        <h3>Bairong Inc., FinTech Department</h3>
+        <div class="muted">Data Product Manager Intern</div>
+        <ul>
+          <li>Researched credit data markets in Thailand, the Philippines and Malaysia, and showed that China-specific fraud signals transferred poorly.</li>
+          <li>Ran data acquisition for 10+ external sources at about 150K records per source each week, and measured vendor data coverage with SQL and Excel.</li>
+        </ul>
+      </div>
+      <div class="when">Dec 2023 to Feb 2024</div>
+      <div class="what">
+        <h3>Caixin Securities</h3>
+        <div class="muted">Research Intern</div>
+        <ul><li>Built comparable-company valuation tables for semiconductor companies with Wind data and kept weekly industry trackers.</li></ul>
+      </div>
+      <div class="when">2026 to 2028</div>
+      <div class="what">
+        <h3>Duke University, Pratt School of Engineering</h3>
+        <div class="muted">M.Eng. in Financial Technology</div>
+      </div>
+      <div class="when">2022 to 2026</div>
+      <div class="what">
+        <h3>Minzu University of China</h3>
+        <div class="muted">Bachelor of Economics, Digital Economy</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" aria-labelledby="skills-title">
+  <div class="wrap">
+    <h2 id="skills-title">Tools I use</h2>
+    <p><strong>Python</strong> with pandas, NumPy, SciPy, scikit-learn and Matplotlib for research and backtesting. <strong>SQL</strong> and <strong>Stata</strong> for data work. <strong>Wind</strong>, Excel, JMeter and Postman at work. Data collection with Requests, Selenium and Scrapy.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Yuchen Kuang, Durham, NC</span>
+    <span>yuchen.kuang@duke.edu</span>
+  </div>
+</footer>
+
+<script src="js/charts.js"></script>
+<script src="js/story.js"></script>
+<script>
+{
+  const { pct, num } = Charts;
+  window.addEventListener("rsrs-data", e => {
+    const d = e.detail, s = d.compare.strategy.out_of_sample;
+    document.getElementById("rsrs-nums").innerHTML =
+      `<div><strong>${pct(s.ann_return)}</strong>return, 2022 to 2026</div><div><strong>${num(s.sharpe)}</strong>Sharpe, after costs</div>`;
+    Charts.spark(document.getElementById("rsrs-spark"), d.nav.strategy.map(Math.log), "--s1");
+  });
+  fetch("data/risk_parity.json").then(r => r.json()).then(d => {
+    const s = d.stats_full.risk_parity;
+    document.getElementById("rp-nums").innerHTML =
+      `<div><strong>${num(s.sharpe)}</strong>Sharpe, after costs</div><div><strong>${pct(s.max_dd)}</strong>max drawdown</div>`;
+    Charts.spark(document.getElementById("rp-spark"), d.nav.risk_parity, "--s1");
+  });
+}
+</script>
+</body>
+</html>
